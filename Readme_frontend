@@ -1,0 +1,83 @@
+Technology Stack
+Component	 |   Technology	   |  Version	  |  Purpose
+Framework	     Next.js	        14.0.4	     React framework with SSR capabilities
+Language	     TypeScript	      5.x	         Type-safe JavaScript
+Styling	       Tailwind CSS  	  3.3.x	       Utility-first CSS framework
+HTTP Client	   Fetch API	      Native	     Modern browser API for network requests
+Deployment	   Vercel	          Platform     Serverless deployment with CI/CD
+
+
+Key Components & Flow
+1. Main Application Flow:
+
+typescript
+// Simplified upload and polling logic
+const handleUpload = async (file: File) => {
+  // 1. Prepare form data (backend expects 'file' field)
+  const formData = new FormData();
+  formData.append('file', file); // Critical: field name must be 'file'
+  
+  // 2. Send to backend API
+  const response = await fetch(`${API_URL}/upload`, {
+    method: 'POST',
+    body: formData
+  });
+  
+  // 3. Extract task ID for status tracking
+  const { task_id } = await response.json();
+  
+  // 4. Start polling for completion
+  startPolling(task_id);
+};
+
+
+2. Polling Mechanism:
+
+typescript
+// Real-time status updates every second
+const pollStatus = async (taskId: string) => {
+  const interval = setInterval(async () => {
+    const status = await fetch(`${API_URL}/result/${taskId}`);
+    const data = await status.json();
+    
+    switch(data.status) {
+      case 'completed':
+        setResult(data.result_url);
+        clearInterval(interval);
+        break;
+      case 'failed':
+        showError(data.error);
+        clearInterval(interval);
+        break;
+      default:
+        updateProgress(data.progress); // Update UI progress bar
+    }
+  }, 1000); // Poll every second
+};
+
+
+3. User Interface Structure:
+
+Upload Screen: Drag-and-drop zone with file validation
+
+Processing Screen: Animated progress bar with step indicators
+
+Result Screen: Side-by-side comparison (original vs personalized)
+
+Error States: Comprehensive error handling with retry options
+
+Environment Configuration
+env
+# .env.local - Development
+NEXT_PUBLIC_API_URL=http://localhost:8000
+
+# .env.production - Vercel Deployment  
+NEXT_PUBLIC_API_URL=https://pickabook-backend.onrender.com
+Deployment on Vercel
+Automatic Git Integration: Push to GitHub triggers deployment
+
+Serverless Functions: API routes handled by Vercel Functions
+
+Global CDN: Assets served from edge locations worldwide
+
+Automatic HTTPS: SSL certificates provisioned automatically
