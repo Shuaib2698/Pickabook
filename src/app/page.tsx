@@ -69,9 +69,9 @@ export default function Home() {
       const formData = new FormData()
       formData.append("file", file)
 
-      const response = await fetch("https://pickabook-backend-kvrp.onrender.com/api/upload", {
-    method: "POST",
-    body: formData,
+      const response = await fetch("https://pickabook-backend-v0d1.onrender.com/api/upload", {
+        method: "POST",
+        body: formData,
       })
       
       const data = await response.json()
@@ -109,11 +109,11 @@ export default function Home() {
 
   const pollResult = async (taskId: string) => {
     try {
-      const resultResponse = await fetch(`https://pickabook-backend-kvrp.onrender.com/api/result/${taskId}`)
+      const resultResponse = await fetch(`https://pickabook-backend-v0d1.onrender.com/api/result/${taskId}`)
       const resultData = await resultResponse.json()
 
       if (resultData.status === "completed") {
-        setResult(`https://pickabook-backend-kvrp.onrender.com${resultData.result_url}`)
+        setResult(`https://pickabook-backend-v0d1.onrender.com${resultData.result_url}`)
         setProcessing(false)
         setProcessingSteps(prev => prev.map(step => ({ ...step, status: "completed" })))
         toast({
